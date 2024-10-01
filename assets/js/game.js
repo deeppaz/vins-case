@@ -10,6 +10,7 @@ let powerActive = false;
 // Variables to store touch positions
 let touchStartX = 0;
 let touchEndX = 0;
+const swipeThreshold = 50;
 
 const bgMusic = new Audio('assets/audios/bg-music.mp3');
 const toySounds = [
@@ -220,6 +221,7 @@ window.addEventListener('keydown', (e) => {
 // Function to handle touch start
 function handleTouchStart(event) {
     touchStartX = event.changedTouches[0].screenX;
+    touchEndX = touchStartX; // Reset touchEndX to ensure accurate swipe detection
 }
 
 // Function to handle touch move
@@ -229,14 +231,18 @@ function handleTouchMove(event) {
 
 // Function to handle touch end
 function handleTouchEnd() {
-    if (touchEndX < touchStartX) {
-        // Swipe left
-        player.move('left');
-    } else if (touchEndX > touchStartX) {
-        // Swipe right
-        player.move('right');
+    const touchDistance = touchEndX - touchStartX;
+    if (Math.abs(touchDistance) > swipeThreshold) {
+        if (touchDistance < 0) {
+            // Swipe left
+            player.move('left');
+        } else {
+            // Swipe right
+            player.move('right');
+        }
     }
 }
+
 // Add touch event listeners
 window.addEventListener('touchstart', handleTouchStart, false);
 window.addEventListener('touchmove', handleTouchMove, false);
