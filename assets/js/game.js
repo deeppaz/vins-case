@@ -227,10 +227,6 @@ function handleTouchStart(event) {
 // Function to handle touch move
 function handleTouchMove(event) {
     touchEndX = event.changedTouches[0].screenX;
-}
-
-// Function to handle touch end
-function handleTouchEnd() {
     const touchDistance = touchEndX - touchStartX;
     if (Math.abs(touchDistance) > swipeThreshold) {
         if (touchDistance < 0) {
@@ -240,7 +236,15 @@ function handleTouchEnd() {
             // Swipe right
             player.move('right');
         }
+        touchStartX = touchEndX; // Reset touchStartX to ensure continuous movement
     }
+}
+
+// Function to handle touch end
+function handleTouchEnd() {
+    // Reset touch positions
+    touchStartX = 0;
+    touchEndX = 0;
 }
 
 // Add touch event listeners
