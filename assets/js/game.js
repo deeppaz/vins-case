@@ -31,7 +31,7 @@ class Player {
         this.y = canvas.height - 50;
         this.width = 50;
         this.height = 50;
-        this.speed = 5;
+        this.speed = 10;
         this.color = 'blue';
         this.type = type;
     }
