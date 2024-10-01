@@ -7,6 +7,9 @@ let player, objects, score, timer, gameInterval, objectInterval;
 let gameRunning = false;
 let highestScore = 0;
 let powerActive = false;
+// Variables to store touch positions
+let touchStartX = 0;
+let touchEndX = 0;
 
 const bgMusic = new Audio('assets/audios/bg-music.mp3');
 const toySounds = [
@@ -213,6 +216,31 @@ window.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight') player.move('right');
 });
 
+
+// Function to handle touch start
+function handleTouchStart(event) {
+    touchStartX = event.changedTouches[0].screenX;
+}
+
+// Function to handle touch move
+function handleTouchMove(event) {
+    touchEndX = event.changedTouches[0].screenX;
+}
+
+// Function to handle touch end
+function handleTouchEnd() {
+    if (touchEndX < touchStartX) {
+        // Swipe left
+        player.move('left');
+    } else if (touchEndX > touchStartX) {
+        // Swipe right
+        player.move('right');
+    }
+}
+// Add touch event listeners
+window.addEventListener('touchstart', handleTouchStart, false);
+window.addEventListener('touchmove', handleTouchMove, false);
+window.addEventListener('touchend', handleTouchEnd, false);
 // Wait for all audio assets to load before hiding the loading screen
 const audioAssets = [bgMusic, ...toySounds, powerSound];
 let loadedAssets = 0;
