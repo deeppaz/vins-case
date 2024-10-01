@@ -7,6 +7,7 @@ let player, objects, score, timer, gameInterval, objectInterval;
 let gameRunning = false;
 let highestScore = 0;
 let powerActive = false;
+let touchStartX = 0;
 
 const bgMusic = new Audio('assets/audios/bg-music.mp3');
 const toySounds = [
@@ -211,6 +212,30 @@ window.addEventListener('keydown', (e) => {
     if (!gameRunning) return;
     if (e.key === 'ArrowLeft') player.move('left');
     if (e.key === 'ArrowRight') player.move('right');
+});
+
+window.addEventListener('touchstart', (e) => {
+    if (!gameRunning) return;
+    touchStartX = e.touches[0].clientX;
+});
+
+window.addEventListener('touchmove', (e) => {
+    if (!gameRunning) return;
+    const touchEndX = e.touches[0].clientX;
+    const touchDiff = touchEndX - touchStartX;
+
+    if (touchDiff > 0) {
+        player.move('right');
+    } else if (touchDiff < 0) {
+        player.move('left');
+    }
+
+    touchStartX = touchEndX; // Yeni başlangıç noktasını güncelle
+});
+
+window.addEventListener('touchend', (e) => {
+    if (!gameRunning) return;
+    touchStartX = 0; // Dokunma bittiğinde başlangıç noktasını sıfırla
 });
 
 // Wait for all audio assets to load before hiding the loading screen
