@@ -8,6 +8,7 @@ let gameRunning = false;
 let highestScore = 0;
 let powerActive = false;
 let touchStartX = 0;
+const touchThreshold = 2;
 
 const bgMusic = new Audio('assets/audios/bg-music.mp3');
 const toySounds = [
@@ -224,13 +225,14 @@ window.addEventListener('touchmove', (e) => {
     const touchEndX = e.touches[0].clientX;
     const touchDiff = touchEndX - touchStartX;
 
-    if (touchDiff > 0) {
-        player.move('right');
-    } else if (touchDiff < 0) {
-        player.move('left');
+    if (Math.abs(touchDiff) > touchThreshold) {
+        if (touchDiff > 0) {
+            player.move('right');
+        } else if (touchDiff < 0) {
+            player.move('left');
+        }
+        touchStartX = touchEndX; // Yeni başlangıç noktasını güncelle
     }
-
-    touchStartX = touchEndX; // Yeni başlangıç noktasını güncelle
 });
 
 window.addEventListener('touchend', (e) => {
