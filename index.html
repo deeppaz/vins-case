@@ -11,13 +11,23 @@
     <div id="game-container">
         <canvas id="gameCanvas"></canvas>
         <div id="ui">
-            <button id="babaButton">Baba (Square)</button>
-            <button id="anneButton">Anne (Triangle)</button>
-            <button id="startButton" style="display:none;">Start Game</button>
-            <button id="replayButton" style="display:none;">Replay</button>
-            <div id="score">Score: 0</div>
-            <div id="timer">Time: 60</div>
-            <div id="highScore">High Score: 0</div>
+            <div class="header" id="header">
+                <img src="assets/images/logo.png" alt="Molfix Logo">
+            </div>
+            <!-- <div class="character-selection" id="selectYourPlayer">Select Your Player</div> -->
+            <div class="character-buttons">
+                <button id="babaButton" class="cloud-button-dad">
+                    <img src="assets/images/dad-face.png" alt="Dad">
+                </button>
+                <button id="anneButton" class="cloud-button-mom">
+                    <img src="assets/images/mom-face.png" alt="Mom">
+                </button>
+            </div>
+            <button id="startButton" class="cloud-button" style="display:none;">Start Game</button>
+            <button id="replayButton" class="cloud-button" style="display:none;">Replay</button>
+            <div id="score" class="cloud-style" style="display:none;">Score: 0</div>
+            <div id="timer" class="cloud-style" style="display:none;">Time: 60</div>
+            <div id="highScore" class="cloud-style">High Score: 0</div>
         </div>
     </div>
     <script src="assets/js/game.js"></script>

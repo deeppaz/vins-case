@@ -9,7 +9,8 @@ let highestScore = 0;
 let powerActive = false;
 let touchStartX = 0;
 const touchThreshold = 2;
-
+let characterType = 'square'; 
+let powerCount = 0;
 const bgMusic = new Audio('assets/audios/bg-music.mp3');
 const toySounds = [
     new Audio('assets/audios/toy-1.mp3'),
@@ -18,35 +19,57 @@ const toySounds = [
 ];
 const powerSound = new Audio('assets/audios/power.mp3');
 
-let characterType = 'square'; 
-
 document.getElementById('babaButton').addEventListener('click', () => selectCharacter('square'));
 document.getElementById('anneButton').addEventListener('click', () => selectCharacter('triangle'));
 document.getElementById('startButton').addEventListener('click', startGame);
 document.getElementById('replayButton').addEventListener('click', startGame);
+const fallingImages = {
+    normal_diaper: new Image(),
+    molfix_diaper: new Image(),
+    toy: new Image(),
+    power: new Image()
+};
+
+// düşen nesnelerin kaynaklarını ayarlayın
+fallingImages.normal_diaper.src = 'assets/images/normal-diaper.png';
+fallingImages.molfix_diaper.src = 'assets/images/molfix-diaper.png';
+fallingImages.toy.src = 'assets/images/toy.png';
+fallingImages.power.src = 'assets/images/power.png';
+
+fallingImages.normal_diaper.onload = fallingImages.molfix_diaper.onload = fallingImages.toy.onload = fallingImages.power.onload = function() {
+    console.log('Images loaded');
+};
+
+const playerImages = {
+    square: new Image(),
+    triangle: new Image()
+};
+
+// oyuncu görsellerinin kaynaklarını ayarlayın
+playerImages.square.src = 'assets/images/dad.png';
+playerImages.triangle.src = 'assets/images/mom.png';
+
+playerImages.triangle.onload = playerImages.square.onload = function() {
+    console.log('Player images loaded');
+};
 
 class Player {
     constructor(type) {
-        this.x = canvas.width / 2;
-        this.y = canvas.height - 50;
-        this.width = 50;
-        this.height = 50;
+        this.x = canvas.width / 2 - 25; // yeni genişlik için ayarlandı
+        this.y = canvas.height - 100; // yeni yükseklik için ayarlandı
         this.speed = 10;
-        this.color = 'blue';
         this.type = type;
+
+        // oyuncu görselinin boyutlarını ayarla
+        this.width = 120;
+        this.height = this.width * (playerImages[type].height / playerImages[type].width); // resim oranına göre yükseklik hesapla
     }
 
     draw() {
-        ctx.fillStyle = this.color;
         if (this.type === 'square') {
-            ctx.fillRect(this.x, this.y, this.width, this.height);
+            ctx.drawImage(playerImages.square, this.x, this.y, this.width, this.height);
         } else if (this.type === 'triangle') {
-            ctx.beginPath();
-            ctx.moveTo(this.x, this.y);
-            ctx.lineTo(this.x + this.width / 2, this.y - this.height);
-            ctx.lineTo(this.x + this.width, this.y);
-            ctx.closePath();
-            ctx.fill();
+            ctx.drawImage(playerImages.triangle, this.x, this.y, this.width, this.height);
         }
     }
 
@@ -56,33 +79,62 @@ class Player {
     }
 }
 
+function randomType() {
+    const rand = Math.random();
+    if (powerCount < 6 && rand < 0.05) { // %5 olasılıkla power, en fazla 3 kere
+        powerCount++;
+        return 'power';
+    } else if (rand < 0.15) { // %10 olasılıkla toy
+        return 'toy';
+    } else if (rand < 0.45) { // %30 olasılıkla molfix_diaper
+        return 'molfix_diaper';
+    } else { // %55 olasılıkla normal_diaper
+        return 'normal_diaper';
+    }
+}
+
 class FallingObject {
-    constructor(type) {
-        this.x = Math.random() * (canvas.width - 30);
+    constructor() {
+        this.x = Math.random() * (canvas.width - 60);
         this.y = 0;
-        this.width = 30;
-        this.height = 30;
         this.speed = 2 + Math.random() * 3;
-        this.type = type;
+        this.type = randomType();
+
+        // Görselin boyutlarını ayarla
+        if (this.type === 'normal_diaper') {
+            this.width = fallingImages.normal_diaper.width;
+            this.height = fallingImages.normal_diaper.height;
+        } else if (this.type === 'molfix_diaper') {
+            this.width = fallingImages.molfix_diaper.width;
+            this.height = fallingImages.molfix_diaper.height;
+        } else if (this.type === 'toy') {
+            this.width = fallingImages.toy.width;
+            this.height = fallingImages.toy.height;
+        } else if (this.type === 'power') {
+            this.width = fallingImages.power.width;
+            this.height = fallingImages.power.height;
+        }
     }
 
     draw() {
-        if (this.type === 'diaper') {
-            ctx.fillStyle = 'green';
-            ctx.fillRect(this.x, this.y, this.width, this.height);
+        if (this.type === 'normal_diaper') {
+            ctx.drawImage(fallingImages.normal_diaper, this.x, this.y);
+        } else if (this.type === 'molfix_diaper') {
+            ctx.save();
+            ctx.shadowBlur = 5;
+            ctx.shadowColor = 'yellow';
+            ctx.globalCompositeOperation = 'ligtten';
+            ctx.drawImage(fallingImages.molfix_diaper, this.x, this.y);
+            ctx.restore();
         } else if (this.type === 'toy') {
-            ctx.fillStyle = 'red';
-            ctx.fillRect(this.x, this.y, this.width, this.height);
-        } else if (this.type === 'laugh') {
-            ctx.fillStyle = 'black';
-            ctx.beginPath();
-            ctx.arc(this.x + this.width / 2, this.y + this.height / 2, this.width / 2, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.drawImage(fallingImages.toy, this.x, this.y);
         } else if (this.type === 'power') {
-            ctx.fillStyle = 'yellow';
-            ctx.beginPath();
-            ctx.arc(this.x + this.width / 2, this.y + this.height / 2, this.width / 2, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.save();
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = 'white';
+            ctx.globalCompositeOperation = 'ligtten';
+            ctx.drawImage(fallingImages.power, this.x, this.y);
+            ctx.restore();
         }
     }
 
@@ -95,6 +147,8 @@ function selectCharacter(type) {
     characterType = type;
     document.getElementById('babaButton').style.display = 'none';
     document.getElementById('anneButton').style.display = 'none';
+    // document.getElementById('selectYourPlayer').style.display = 'none';
+    document.getElementById('header').style.display = 'none';
     document.getElementById('startButton').style.display = 'block';
 }
 
@@ -108,6 +162,8 @@ function startGame() {
     document.getElementById('replayButton').style.display = 'none';
     document.getElementById('score').innerText = `Score: ${score}`;
     document.getElementById('timer').innerText = `Time: ${timer}`;
+    document.getElementById('score').style.display = 'block';
+    document.getElementById('timer').style.display = 'block';
     gameInterval = setInterval(gameLoop, 1000 / 60);
     objectInterval = setInterval(spawnObject, 1000);
     setTimeout(endGame, 60000);
@@ -125,9 +181,9 @@ function gameLoop() {
             objects.splice(objects.indexOf(obj), 1);
         }
         if (obj.y + obj.height > player.y && obj.x < player.x + player.width && obj.x + obj.width > player.x) {
-            if (obj.type === 'diaper') score += 10;
-            else if (obj.type === 'toy') score += 30;
-            else if (obj.type === 'laugh') playRandomToySound();
+            if (obj.type === 'normal_diaper') score += 10;
+            else if (obj.type === 'molfix_diaper') score += 30;
+            else if (obj.type === 'toy') playRandomToySound();
             else if (obj.type === 'power') {
                 activatePower();
                 powerSound.play();
@@ -139,7 +195,7 @@ function gameLoop() {
 }
 
 function spawnObject() {
-    const types = ['diaper', 'toy', 'laugh', 'power'];
+    const types = ['normal_diaper', 'molfix_diaper', 'toy', 'power'];
     const type = types[Math.floor(Math.random() * types.length)];
     objects.push(new FallingObject(type));
 }
@@ -170,8 +226,8 @@ function endGame() {
     gameRunning = false;
     if (score > highestScore) {
         highestScore = score;
-        localStorage.setItem('highScore', highestScore); // Save high score to local storage
-        document.getElementById('highScore').innerText = `High Score: ${highestScore}`; // Update high score display
+        localStorage.setItem('highScore', highestScore); // yüksek skoru lcstorage'a kaydet
+        document.getElementById('highScore').innerText = `High Score: ${highestScore}`; // güncellenmiş yüksek skoru göster
     }
     document.getElementById('replayButton').style.display = 'block';
     alert(`Game Over! Your score is ${score}. Highest score: ${highestScore}`);
@@ -240,7 +296,7 @@ window.addEventListener('touchend', (e) => {
     touchStartX = 0; // Dokunma bittiğinde başlangıç noktasını sıfırla
 });
 
-// Wait for all audio assets to load before hiding the loading screen
+// assetslerin yüklenmesini bekle
 const audioAssets = [bgMusic, ...toySounds, powerSound];
 let loadedAssets = 0;
 
@@ -263,5 +319,5 @@ function loadHighScore() {
     }
 }
 
-// Load high score on page load
+// yüksek skoru yükle
 window.onload = loadHighScore;
