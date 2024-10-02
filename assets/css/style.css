@@ -8,6 +8,7 @@ html {
   height: 100vh;
   background-image: url("../images/bg-cloud.png");
   width: 100%;
+  overflow: hidden;
 }
 
 .header {
@@ -43,12 +44,12 @@ html {
 }
 
 #game-container {
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  max-width: 800px;
-  height: 600px;
+  height: 100%;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
 }
 
 canvas {

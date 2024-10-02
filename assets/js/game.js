@@ -1,7 +1,9 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-canvas.width = 800;
-canvas.height = 600;
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
 
 let player, objects, score, timer, gameInterval, objectInterval;
 let gameRunning = false;
@@ -333,3 +335,5 @@ function loadHighScore() {
 
 // yüksek skoru yükle
 window.onload = loadHighScore;
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
