@@ -7,7 +7,10 @@
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-    <div id="loadingScreen">Loading...</div>
+    <div id="loadingScreen">
+        <img src="assets/images/addwins_logo.jpg" alt="Addwins Logo">
+        <p>Loading...</p>
+    </div>
     <div id="game-container">
         <canvas id="gameCanvas"></canvas>
         <div id="ui">
@@ -23,11 +26,16 @@
                     <img src="assets/images/mom-face.png" alt="Mom">
                 </button>
             </div>
-            <button id="startButton" class="cloud-button" style="display:none;">Start Game</button>
-            <button id="replayButton" class="cloud-button" style="display:none;">Replay</button>
+            <button id="startButton" class="vins-button" style="display:none;">Start Game</button>
+            <button id="replayButton" class="vins-button" style="display:none;">Replay</button>
             <div id="score" class="cloud-style" style="display:none;">Score: 0</div>
             <div id="timer" class="cloud-style" style="display:none;">Time: 60</div>
             <div id="highScore" class="cloud-style">High Score: 0</div>
+        </div>
+        <div id="endGameScreen" class="cloud-style" style="display:none;">
+            <div id="finalScore">Your score: 0</div>
+            <div id="finalHighScore">Highest score: 0</div>
+            <button id="endGameReplayButton" class="cloud-button">Replay</button>
         </div>
     </div>
     <script src="assets/js/game.js"></script>

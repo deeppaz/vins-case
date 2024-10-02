@@ -226,12 +226,24 @@ function endGame() {
     gameRunning = false;
     if (score > highestScore) {
         highestScore = score;
-        localStorage.setItem('highScore', highestScore); // yüksek skoru lcstorage'a kaydet
-        document.getElementById('highScore').innerText = `High Score: ${highestScore}`; // güncellenmiş yüksek skoru göster
+        localStorage.setItem('highScore', highestScore);
+        document.getElementById('highScore').innerText = `High Score: ${highestScore}`;
     }
-    document.getElementById('replayButton').style.display = 'block';
-    alert(`Game Over! Your score is ${score}. Highest score: ${highestScore}`);
+    document.getElementById('finalScore').innerText = `Your score: ${score}`;
+    document.getElementById('finalHighScore').innerText = `Highest score: ${highestScore}`;
+    document.getElementById('endGameScreen').style.display = 'flex';
+    document.getElementById('score').style.display = 'none';
+    document.getElementById('timer').style.display = 'none';
+    bgMusic.pause();
+    bgMusic.currentTime = 0;
+    bgMusic.playbackRate = 1.0; 
+    resetObjectSpeeds()
 }
+
+document.getElementById('endGameReplayButton').addEventListener('click', () => {
+    document.getElementById('endGameScreen').style.display = 'none';
+    startGame();
+});
 
 function playRandomToySound() {
     const randomIndex = Math.floor(Math.random() * toySounds.length);
