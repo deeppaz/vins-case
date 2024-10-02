@@ -331,11 +331,19 @@ function checkAllAssetsLoaded() {
     const assetPromises = assets.map(asset => {
         return new Promise((resolve, reject) => {
             if (asset instanceof HTMLImageElement) {
-                asset.onload = resolve;
-                asset.onerror = reject;
+                if (asset.complete) {
+                    resolve();
+                } else {
+                    asset.onload = resolve;
+                    asset.onerror = reject;
+                }
             } else if (asset instanceof HTMLAudioElement) {
-                asset.addEventListener('canplaythrough', resolve, { once: true });
-                asset.onerror = reject;
+                if (asset.readyState >= 3) { // HAVE_FUTURE_DATA
+                    resolve();
+                } else {
+                    asset.addEventListener('loadeddata', resolve, { once: true });
+                    asset.onerror = reject;
+                }
             }
         });
     });
@@ -348,7 +356,10 @@ function checkAllAssetsLoaded() {
 }
 
 function hideLoadingScreen() {
-    loadingScreen.style.display = 'none';
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen) {
+        loadingScreen.style.display = 'none';
+    }
     document.getElementById('ui').style.display = 'flex';
 }
 
