@@ -27,6 +27,7 @@ document.getElementById('babaButton').addEventListener('click', () => selectChar
 document.getElementById('anneButton').addEventListener('click', () => selectCharacter('triangle'));
 document.getElementById('startButton').addEventListener('click', startGame);
 document.getElementById('replayButton').addEventListener('click', startGame);
+    document.getElementById('ui').style.display = 'flex';
 
 const fallingImages = {
     normal_diaper: new Image(),
@@ -314,46 +315,46 @@ window.addEventListener('touchend', (e) => {
 });
 
 // assetslerin yüklenmesini bekle
-function checkAllAssetsLoaded() {
-    const assets = [
-        fallingImages.normal_diaper,
-        fallingImages.molfix_diaper,
-        fallingImages.toy,
-        fallingImages.power,
-        playerImages.square,
-        playerImages.triangle,
-        bgMusic,
-        ...toySounds,
-        powerSound
-    ];
+// function checkAllAssetsLoaded() {
+//     const assets = [
+//         fallingImages.normal_diaper,
+//         fallingImages.molfix_diaper,
+//         fallingImages.toy,
+//         fallingImages.power,
+//         playerImages.square,
+//         playerImages.triangle,
+//         bgMusic,
+//         ...toySounds,
+//         powerSound
+//     ];
 
-    let loadedAssets = 0;
+//     let loadedAssets = 0;
 
-    assets.forEach(asset => {
-        if (asset instanceof HTMLImageElement) {
-            asset.onload = () => {
-                loadedAssets++;
-                if (loadedAssets === assets.length) {
-                    hideLoadingScreen();
-                }
-            };
-        } else if (asset instanceof HTMLAudioElement) {
-            asset.addEventListener('canplaythrough', () => {
-                loadedAssets++;
-                if (loadedAssets === assets.length) {
-                    hideLoadingScreen();
-                }
-            }, { once: true });
-        }
-    });
-}
+//     assets.forEach(asset => {
+//         if (asset instanceof HTMLImageElement) {
+//             asset.onload = () => {
+//                 loadedAssets++;
+//                 if (loadedAssets === assets.length) {
+//                     hideLoadingScreen();
+//                 }
+//             };
+//         } else if (asset instanceof HTMLAudioElement) {
+//             asset.addEventListener('canplaythrough', () => {
+//                 loadedAssets++;
+//                 if (loadedAssets === assets.length) {
+//                     hideLoadingScreen();
+//                 }
+//             }, { once: true });
+//         }
+//     });
+// }
 
-function hideLoadingScreen() {
-    loadingScreen.style.display = 'none';
-    document.getElementById('ui').style.display = 'flex';
-}
+// function hideLoadingScreen() {
+//     loadingScreen.style.display = 'none';
+//     document.getElementById('ui').style.display = 'flex';
+// }
 
-checkAllAssetsLoaded();
+// checkAllAssetsLoaded();
 
 function loadHighScore() {
     const savedHighScore = localStorage.getItem('highScore');
