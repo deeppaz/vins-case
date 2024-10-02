@@ -314,7 +314,6 @@ window.addEventListener('touchend', (e) => {
     touchStartX = 0; // Dokunma bittiğinde başlangıç noktasını sıfırla
 });
 
-// assetslerin yüklenmesini bekle
 function checkAllAssetsLoaded() {
     const assets = [
         fallingImages.normal_diaper,
@@ -338,12 +337,9 @@ function checkAllAssetsLoaded() {
                     asset.onerror = reject;
                 }
             } else if (asset instanceof HTMLAudioElement) {
-                if (asset.readyState >= 3) { // HAVE_FUTURE_DATA
-                    resolve();
-                } else {
-                    asset.addEventListener('loadeddata', resolve, { once: true });
-                    asset.onerror = reject;
-                }
+                asset.load(); // Ses dosyasını yüklemeyi zorla
+                asset.addEventListener('loadeddata', resolve, { once: true });
+                asset.onerror = reject;
             }
         });
     });
@@ -363,7 +359,9 @@ function hideLoadingScreen() {
     document.getElementById('ui').style.display = 'flex';
 }
 
-checkAllAssetsLoaded();
+document.addEventListener('click', () => {
+    checkAllAssetsLoaded();
+});
 
 function loadHighScore() {
     const savedHighScore = localStorage.getItem('highScore');
