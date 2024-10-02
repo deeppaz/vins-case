@@ -13,6 +13,8 @@ let touchStartX = 0;
 const touchThreshold = 2;
 let characterType = 'square'; 
 let powerCount = 0;
+const loadingScreen = document.getElementById('loadingScreen');
+
 const bgMusic = new Audio('assets/audios/bg-music.mp3');
 const toySounds = [
     new Audio('assets/audios/toy-1.mp3'),
@@ -25,6 +27,7 @@ document.getElementById('babaButton').addEventListener('click', () => selectChar
 document.getElementById('anneButton').addEventListener('click', () => selectCharacter('triangle'));
 document.getElementById('startButton').addEventListener('click', startGame);
 document.getElementById('replayButton').addEventListener('click', startGame);
+
 const fallingImages = {
     normal_diaper: new Image(),
     molfix_diaper: new Image(),
@@ -311,19 +314,46 @@ window.addEventListener('touchend', (e) => {
 });
 
 // assetslerin yüklenmesini bekle
-const audioAssets = [bgMusic, ...toySounds, powerSound];
-let loadedAssets = 0;
+function checkAllAssetsLoaded() {
+    const assets = [
+        fallingImages.normal_diaper,
+        fallingImages.molfix_diaper,
+        fallingImages.toy,
+        fallingImages.power,
+        playerImages.square,
+        playerImages.triangle,
+        bgMusic,
+        ...toySounds,
+        powerSound
+    ];
 
-audioAssets.forEach(audio => {
-    audio.addEventListener('canplaythrough', () => {
-        loadedAssets++;
-        if (loadedAssets === audioAssets.length) {
-            document.getElementById('loadingScreen').style.display = 'none';
-            document.getElementById('ui').style.display = 'flex';
-            loadHighScore(); 
+    let loadedAssets = 0;
+
+    assets.forEach(asset => {
+        if (asset instanceof HTMLImageElement) {
+            asset.onload = () => {
+                loadedAssets++;
+                if (loadedAssets === assets.length) {
+                    hideLoadingScreen();
+                }
+            };
+        } else if (asset instanceof HTMLAudioElement) {
+            asset.addEventListener('canplaythrough', () => {
+                loadedAssets++;
+                if (loadedAssets === assets.length) {
+                    hideLoadingScreen();
+                }
+            }, { once: true });
         }
-    }, { once: true });
-});
+    });
+}
+
+function hideLoadingScreen() {
+    loadingScreen.style.display = 'none';
+    document.getElementById('ui').style.display = 'flex';
+}
+
+checkAllAssetsLoaded();
 
 function loadHighScore() {
     const savedHighScore = localStorage.getItem('highScore');
