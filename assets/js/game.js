@@ -359,9 +359,7 @@ function hideLoadingScreen() {
     document.getElementById('ui').style.display = 'flex';
 }
 
-document.addEventListener('click', () => {
-    checkAllAssetsLoaded();
-});
+
 
 function loadHighScore() {
     const savedHighScore = localStorage.getItem('highScore');
@@ -373,5 +371,6 @@ function loadHighScore() {
 
 // yüksek skoru yükle
 window.onload = loadHighScore;
+window.onload = checkAllAssetsLoaded;
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
