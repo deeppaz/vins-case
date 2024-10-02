@@ -6,21 +6,28 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>Molfix Baby Game</title>
+    <title>Molfix Bezi Macerası</title>
     <link rel="stylesheet" href="assets/css/style.css" />
   </head>
   <body>
     <div id="loadingScreen">
       <img src="assets/images/addwins_logo.jpg" alt="Addwins Logo" />
-      <p>Loading...</p>
+      <p>Yükleniyor...</p>
     </div>
     <div id="game-container">
       <canvas id="gameCanvas"></canvas>
       <div id="ui">
+        <button
+          id="openModal"
+          class="info-modal-button"
+          style="border: 2px solid black"
+        >
+          ?
+        </button>
         <div class="header" id="header">
           <img src="assets/images/logo.png" alt="Molfix Logo" />
         </div>
-        <!-- <div class="character-selection" id="selectYourPlayer">Select Your Player</div> -->
+
         <div class="character-buttons">
           <button id="babaButton" class="cloud-button-dad">
             <img src="assets/images/dad-face.png" alt="Dad" />
@@ -29,28 +36,102 @@
             <img src="assets/images/mom-face.png" alt="Mom" />
           </button>
         </div>
+        <div class="character-selection" id="selectYourPlayer">
+          Oyuncunu Seç
+        </div>
+
         <button id="startButton" class="vins-button" style="display: none">
-          Start Game
+          Oyunu Başlat
         </button>
         <button id="replayButton" class="vins-button" style="display: none">
-          Replay
+          Tekrar Oyna
         </button>
         <div>
           <div id="score" class="cloud-style" style="display: none">
-            Score: 0
+            Skor: 0
           </div>
           <div id="timer" class="cloud-style" style="display: none">
-            Time: 60
+            Süre: 60
           </div>
-          <div id="highScore" class="cloud-style">High Score: 0</div>
+          <div id="highScore" class="cloud-style">En Yüksek Skor: 0</div>
+        </div>
+        <div id="myModal" class="modal">
+          <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <div class="modal-item">
+              <div class="image-container">
+                <img src="assets/images/normal-diaper.png" alt="Normal Diaper">
+              </div>
+              <div class="description-container">
+                <p>Normal bez ve 10 puan değerindedir.</p>
+              </div>
+            </div>
+            <div class="modal-item">
+              <div class="image-container">
+                <img src="assets/images/molfix-diaper.png" alt="Another Image">
+              </div>
+              <div class="description-container">
+                <p>Molfix bez ve 30 puan değerindedir. Molfix bezlerini asla kaçırma ve 30 Puanını kap.</p>
+              </div>
+            </div>
+            <div class="modal-item">
+              <div class="image-container">
+                <img src="assets/images/toy.png" alt="Another Image">
+              </div>
+              <div class="description-container">
+                <p>Çıngırak puan olarak değeri yok ama bebeğin mutlu olması için kapmayı unutma.</p>
+              </div>
+            </div>
+            <div class="modal-item">
+              <div class="image-container">
+                <img src="assets/images/power.png" alt="Another Image">
+              </div>
+              <div class="description-container">
+                <p>İşte bu süt gücünü asla kaçırma, çünkü her yakaladığında 5 saniyeliğine x5 daha hızlı olacaksın ve her şeyi daha hızlı kapacaksın.</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div id="endGameScreen" class="cloud-style" style="display: none">
-        <div id="finalScore">Your score: 0</div>
-        <div id="finalHighScore">Highest score: 0</div>
-        <button id="endGameReplayButton" class="cloud-button">Replay</button>
+        <div id="finalScore">Skor: 0</div>
+        <div id="finalHighScore">En Yüksek Skor: 0</div>
+        <button
+          id="endGameReplayButton"
+          class="vins-button"
+          style="border: 1px solid black"
+        >
+          Tekrar Oyna
+        </button>
+        <button
+          id="homeButton"
+          class="vins-button"
+          style="border: 1px solid black"
+        >
+          Anasayfa
+        </button>
       </div>
     </div>
     <script src="assets/js/game.js"></script>
+
+    <script>
+      const modal = document.getElementById("myModal");
+      const btn = document.getElementById("openModal");
+      const span = document.getElementById("closeModal");
+
+      btn.onclick = function () {
+        modal.style.display = "block";
+      };
+
+      span.onclick = function () {
+        modal.style.display = "none";
+      };
+
+      window.onclick = function (event) {
+        if (event.target === modal) {
+          modal.style.display = "none";
+        }
+      };
+    </script>
   </body>
 </html>

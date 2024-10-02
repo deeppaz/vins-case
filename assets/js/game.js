@@ -72,11 +72,25 @@ class Player {
     }
 
     draw() {
+        ctx.save();
+        if (powerActive) {
+            ctx.shadowColor = 'rgba(255, 255, 0, 0.8)'; // Light yellow shadow
+            ctx.shadowBlur = 20;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+        } else {
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+        }
+
         if (this.type === 'square') {
             ctx.drawImage(playerImages.square, this.x, this.y, this.width, this.height);
         } else if (this.type === 'triangle') {
             ctx.drawImage(playerImages.triangle, this.x, this.y, this.width, this.height);
         }
+        ctx.restore();
     }
 
     move(direction) {
@@ -149,11 +163,46 @@ class FallingObject {
     }
 }
 
+function showPowerEffect() {
+    const effectDuration = 2000; // 2 seconds
+    const startTime = Date.now();
+    const powerImage = new Image();
+    powerImage.src = 'assets/images/power_active.png';
+    const scale = 0.5; // Scale factor to make the image smaller
+
+    function drawEffect() {
+        const elapsedTime = Date.now() - startTime;
+        if (elapsedTime >= effectDuration) {
+            resumeGame();
+            return;
+        }
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        player.draw();
+        objects.forEach(obj => obj.draw());
+
+        ctx.save();
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate((elapsedTime / effectDuration) * 2 * Math.PI);
+        ctx.scale(scale, scale); // Scale the image
+        ctx.drawImage(powerImage, -powerImage.width / 2, -powerImage.height / 2);
+        ctx.restore();
+        requestAnimationFrame(drawEffect);
+    }
+
+    drawEffect();
+}
+
+function resumeGame() {
+    gameInterval = setInterval(gameLoop, 1000 / 60);
+    objectInterval = setInterval(spawnObject, 1000);
+}
+
 function selectCharacter(type) {
     characterType = type;
     document.getElementById('babaButton').style.display = 'none';
     document.getElementById('anneButton').style.display = 'none';
-    // document.getElementById('selectYourPlayer').style.display = 'none';
+    document.getElementById('selectYourPlayer').style.display = 'none';
     document.getElementById('header').style.display = 'none';
     document.getElementById('startButton').style.display = 'block';
 }
@@ -170,6 +219,8 @@ function startGame() {
     document.getElementById('timer').innerText = `Time: ${timer}`;
     document.getElementById('score').style.display = 'block';
     document.getElementById('timer').style.display = 'block';
+    document.getElementById('highScore').style.display = 'none';
+    document.getElementById('openModal').style.display = 'none';
     gameInterval = setInterval(gameLoop, 1000 / 60);
     objectInterval = setInterval(spawnObject, 1000);
     setTimeout(endGame, 60000);
@@ -233,13 +284,15 @@ function endGame() {
     if (score > highestScore) {
         highestScore = score;
         localStorage.setItem('highScore', highestScore);
-        document.getElementById('highScore').innerText = `High Score: ${highestScore}`;
+        document.getElementById('highScore').innerText = `Yüksek Skor: ${highestScore}`;
     }
-    document.getElementById('finalScore').innerText = `Your score: ${score}`;
-    document.getElementById('finalHighScore').innerText = `Highest score: ${highestScore}`;
+    document.getElementById('finalScore').innerText = `Skor: ${score}`;
+    document.getElementById('finalHighScore').innerText = `En Yüksek Skor: ${highestScore}`;
     document.getElementById('endGameScreen').style.display = 'flex';
     document.getElementById('score').style.display = 'none';
     document.getElementById('timer').style.display = 'none';
+    document.getElementById('highScore').innerText = `Yüksek Skor: ${highestScore}`; // Ensure highScore is updated
+    document.getElementById('highScore').style.display = 'block'; // Ensure highScore is visible
     bgMusic.pause();
     bgMusic.currentTime = 0;
     bgMusic.playbackRate = 1.0; 
@@ -251,6 +304,10 @@ document.getElementById('endGameReplayButton').addEventListener('click', () => {
     startGame();
 });
 
+document.getElementById('homeButton').addEventListener('click', () => {
+    window.location.reload();
+});
+
 function playRandomToySound() {
     const randomIndex = Math.floor(Math.random() * toySounds.length);
     toySounds[randomIndex].play();
@@ -260,6 +317,12 @@ function activatePower() {
     powerActive = true;
     player.speed *= 2;
     player.color = getRandomColor();
+
+    clearInterval(gameInterval);
+    clearInterval(objectInterval);
+
+    showPowerEffect();
+
     setTimeout(() => {
         player.speed /= 2;
         player.color = 'blue';
@@ -365,12 +428,14 @@ function loadHighScore() {
     const savedHighScore = localStorage.getItem('highScore');
     if (savedHighScore !== null) {
         highestScore = parseInt(savedHighScore, 10);
-        document.getElementById('highScore').innerText = `High Score: ${highestScore}`;
+        document.getElementById('highScore').innerText = `En Yüksek Skor: ${highestScore}`;
     }
 }
 
 // yüksek skoru yükle
-window.onload = loadHighScore;
-window.onload = checkAllAssetsLoaded;
+window.onload = function() {
+    loadHighScore();
+    checkAllAssetsLoaded();
+};
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
