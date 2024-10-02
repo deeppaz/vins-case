@@ -315,46 +315,44 @@ window.addEventListener('touchend', (e) => {
 });
 
 // assetslerin yüklenmesini bekle
-// function checkAllAssetsLoaded() {
-//     const assets = [
-//         fallingImages.normal_diaper,
-//         fallingImages.molfix_diaper,
-//         fallingImages.toy,
-//         fallingImages.power,
-//         playerImages.square,
-//         playerImages.triangle,
-//         bgMusic,
-//         ...toySounds,
-//         powerSound
-//     ];
+function checkAllAssetsLoaded() {
+    const assets = [
+        fallingImages.normal_diaper,
+        fallingImages.molfix_diaper,
+        fallingImages.toy,
+        fallingImages.power,
+        playerImages.square,
+        playerImages.triangle,
+        bgMusic,
+        ...toySounds,
+        powerSound
+    ];
 
-//     let loadedAssets = 0;
+    const assetPromises = assets.map(asset => {
+        return new Promise((resolve, reject) => {
+            if (asset instanceof HTMLImageElement) {
+                asset.onload = resolve;
+                asset.onerror = reject;
+            } else if (asset instanceof HTMLAudioElement) {
+                asset.addEventListener('canplaythrough', resolve, { once: true });
+                asset.onerror = reject;
+            }
+        });
+    });
 
-//     assets.forEach(asset => {
-//         if (asset instanceof HTMLImageElement) {
-//             asset.onload = () => {
-//                 loadedAssets++;
-//                 if (loadedAssets === assets.length) {
-//                     hideLoadingScreen();
-//                 }
-//             };
-//         } else if (asset instanceof HTMLAudioElement) {
-//             asset.addEventListener('canplaythrough', () => {
-//                 loadedAssets++;
-//                 if (loadedAssets === assets.length) {
-//                     hideLoadingScreen();
-//                 }
-//             }, { once: true });
-//         }
-//     });
-// }
+    Promise.all(assetPromises)
+        .then(hideLoadingScreen)
+        .catch(error => {
+            console.error('Asset loading failed:', error);
+        });
+}
 
-// function hideLoadingScreen() {
-//     loadingScreen.style.display = 'none';
-//     document.getElementById('ui').style.display = 'flex';
-// }
+function hideLoadingScreen() {
+    loadingScreen.style.display = 'none';
+    document.getElementById('ui').style.display = 'flex';
+}
 
-// checkAllAssetsLoaded();
+checkAllAssetsLoaded();
 
 function loadHighScore() {
     const savedHighScore = localStorage.getItem('highScore');

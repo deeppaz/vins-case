@@ -29,7 +29,7 @@ html {
   margin: 10px 0;
 }
 
-/* #loadingScreen {
+#loadingScreen {
   position: absolute;
   top: 0;
   left: 0;
@@ -43,7 +43,7 @@ html {
   color: #fff;
   font-size: 24px;
   z-index: 10;
-} */
+}
 
 #game-container {
   position: absolute;
